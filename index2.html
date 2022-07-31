@@ -1,0 +1,168 @@
+<html>
+    <head>
+        <title>Coinview</title>
+        <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    </head>
+
+    <body>
+        <h1>{{ title }}</h1>
+
+        <div id="chart"></div>
+
+        <div id="trades"></div>
+        
+        <br/>
+        
+        <label for="symbol">Enter a Symbol:</label>
+
+        <input type="text" id="symbol" name="symbol">
+        
+        <br/>
+        
+        <label for="Time">Choose a Time:</label>
+
+        <select id="Time" onchange="getSelectedTime()">
+            <option value="--none--">--none--</option>
+            <option value="1m">1m</option>
+            <option value="3m">3m</option>
+            <option value="5m">5m</option>
+            <option value="15m">15m</option>
+            <option value="30m">30m</option>
+            <option value="1h">1h</option>
+            <option value="2h">2h</option>
+            <option value="4h">4h</option>
+            <option value="6h">6h</option>
+            <option value="8h">8h</option>
+            <option value="1d">1d</option>
+            <option value="3d">3d</option>
+            <option value="1w">1w</option>
+            <option value="1M">1M</option>
+        </select>
+        
+        <p>Selected Time is >> </p>
+        <div id="selectedOption"></div>
+
+
+        <script>
+
+            function getSelectedTime(){
+                var e = document.getElementById("Time");
+                var value = e.value;
+                var text = e.options[e.selectedIndex].text;
+    
+                var selectedOptionDiv = document.getElementById('selectedOption')
+                selectedOptionDiv.innerHTML = "";
+                selectedOptionDiv.append(text)
+
+                var sym = document.getElementById("symbol").value;
+
+                console.log('URL is >>> ' , "wss://stream.binance.com:9443/ws/"+ sym +"@kline_" + selectedOptionDiv.innerHTML )
+                
+                var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/"+ sym +"@kline_" + selectedOptionDiv.innerHTML);
+
+                var tradeDiv = document.getElementById('trades')
+
+                binanceSocket.onmessage = function (event) {
+                    console.log(event.data);
+                    //tradeDiv.append(event.data)
+                }
+            }
+            
+
+            //function getAllSymbolData(){
+                //https://api3.binance.com/api/v3/ticker/price
+                /* async init() {
+                    try {
+                      const exchangeInfo = await binance.exchangeInfo();
+                      exchangeInfo.symbols.forEach((symbol) => {
+                        if (symbol.symbol === this.tradingPair) {
+                          return this.meta = Object.assign(this.getters(), symbol);
+                        }
+                      });
+                      return true;
+                    } catch(err) {
+                      console.log('SYMBOL ERROR: ', err.message);
+                      return false;
+                    }
+                  }*/
+            //}
+            
+           /* allSym = fetchAsync('https://api3.binance.com/api/v3/ticker/price');
+
+            async function fetchAsync (url) {
+                let response = await fetch(url);
+                let data = await response.json();
+                //console.log('data....', data);
+                let allSym;
+                for (let i = 0; i < data.length; i++) {
+                    //console.log('data symbols ... ', data[i].symbol);
+                    allSym += data[i].symbol + ',';
+                  }
+                return allSym;
+            }
+            console.log('allSym....', allSym);
+
+            url = 'https://api3.binance.com/api/v3/ticker/price';
+            fetch(url).then(async function(response) {
+                return response.json();
+              }).then(function(data) {
+                //console.log('JSOn Data', data);
+                for (let i = 0; i < data.length; i++) {
+                    //console.log('data symbols ... ', data[i].symbol);
+                  }
+              }).catch(function() {
+                console.log("Booo");
+              });
+*/
+
+        </script>
+        <!-- <div id="my_balances">
+            <h2>Balances</h2>
+
+            <table>            
+                {% for balance in my_balances %}
+                <tr>
+                    <td>
+                        {{ balance['asset'] }} 
+                    </td>
+                    <td>
+                        {{ balance['free'] }}
+                    </td>
+                </tr>
+                    
+                {% endfor %}
+            </table>
+
+        </div> -->
+
+
+        <script>
+        var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@trade");
+
+        var tradeDiv = document.getElementById('trades')
+
+         binanceSocket.onmessage = function (event) {
+             //console.log(event.data);
+
+             var messageObject = JSON.parse(event.data)   
+
+             //tradeDiv.append(messageObject.p) -- displaying real time prices
+
+             //https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md
+
+             //tradeDiv.append(event.data)
+
+
+             // https://www.tradingview.com/lightweight-charts/
+             
+             //https://github.com/tradingview/lightweight-charts
+
+             //https://jsfiddle.net/TradingView/eaod9Lq8/
+                 
+         }
+        </script>
+
+        <!-- <script src="{{ url_for('static', filename='chart2.js') }}"></script> -->
+        <script src="chart2.js"></script>
+    </body>
+</html>
